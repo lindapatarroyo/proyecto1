@@ -4,42 +4,58 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.loducode.project1.databinding.ActivityMainBinding;
 
+import java.util.ArrayList;
+
+
 public class MainActivity extends AppCompatActivity {
 
-    ActivityMainBinding binding;
+    private ActivityMainBinding binding;
+    ArrayList<String> list = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        replaceFragment(new homeFragment());
-        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-            switch (item.getItemId()){
-                case R.id.home:
-                    replaceFragment(new homeFragment());
-                    break;
-                case R.id.profile:
-                    replaceFragment(new ProfileFragment());
-                    break;
-                case R.id.history:
-                    replaceFragment(new HistoryFragment());
-                    break;
-                default:
-                    replaceFragment(new OtherFragment());
+        list.add("Lidna");
+        list.add("Johana");
+        list.add("Patarroyo");
+        list.add("Acero");
+        binding.btnShowFragment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openFragment();
             }
-            return true;
+        });
+        binding.btnShowRV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showRecyclerView();
+            }
         });
     }
-    public void replaceFragment(Fragment fragment){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_Layout, fragment);
+    private void showRecyclerView(){
+        binding.fragmentContainer.setVisibility(View.GONE);
+        binding.rvList.setVisibility(View.VISIBLE);
+        binding.rvList.setHasFixedSize(true);
+        binding.rvList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        Adapter adapter = new Adapter(this, list);
+        binding.rvList.setAdapter(adapter);
+
+    }
+    private void openFragment(){
+        binding.fragmentContainer.setVisibility(View.VISIBLE);
+        binding.rvList.setVisibility(View.GONE);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.fragmentContainer, new OtherFragment());
         fragmentTransaction.commit();
     }
 }
