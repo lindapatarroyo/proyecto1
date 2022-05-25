@@ -1,14 +1,21 @@
 package com.loducode.project1;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.loducode.project1.data.AppDatabase;
+import com.loducode.project1.data.entities.Item;
+import com.loducode.project1.data.dao.ItemDao;
+import com.loducode.project1.repository.ItemRepository;
+import com.loducode.project1.repository.ItemRepositoryImpl;
+
+import java.util.List;
 
 public class homeFragment extends Fragment {
     Button button;
@@ -29,6 +36,27 @@ public class homeFragment extends Fragment {
                     .addToBackStack(null)
                     .commit();
         }*/
+        AppDatabase db = AppDatabase.getInstance(this.getContext());
+        ItemDao dao = db.itemDao();
+        ItemRepository repo = new ItemRepositoryImpl(dao);
+
+        Item item = new Item();
+        item.setName("Item 1");
+        item.setChecked(false);
+        repo.insertItem(item);
+
+        List<Item> items = repo.getAllItems();
+        for (Item i: items){
+            Log.d("Ejemplo", "item id"+i.getItemId()+" name= "+i.getName()+" check= "+i.isChecked());
+        }
+        /* //actualizar items
+        Item itemUpdate = repo.findById(1);
+        itemUpdate.setChecked(true);
+        repo.update(itemUpdate);
+        //Eliminar
+        Item itemDelete = repo.delete(1);
+        repo.deleteItem(itemDelete);
+        */
         return view;
     }
 }
